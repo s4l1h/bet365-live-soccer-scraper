@@ -1,6 +1,10 @@
-# bet365-live-soccer-scraper
+# Bet365 Live Soccer Score Scraper
 
-Bet365 Live Soccer Score Scraper
+## Notes
+
+This software for education only. I don't take any responsibility.
+
+You can get betting odds from bet365 if you change the parser codes in `bet365mobile.js`. It will be your responsibility.
 
 ## Config
 
@@ -85,12 +89,6 @@ Pls look at the `reload.sh` file.
 `/result` it returns results.
 
 `/`it returns results. Status `212` means match's suspended.
-
-## Notes
-
-This software for education only. I don't take any responsibility.
-
-You can get betting odds from bet365 if you change the parser codes in `bet365mobile.js`. It will be your responsibility.
 
 ## screen shots
 
