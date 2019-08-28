@@ -4,7 +4,7 @@ Bet365 Live Soccer Score Scraper
 
 ## Config
 
-Propably you should change config file `/app/config.js` .
+Probably you should change config file `/app/config.js`.
 
 ```javascript
   domain: "mobile.288365.com",
