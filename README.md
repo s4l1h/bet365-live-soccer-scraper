@@ -56,13 +56,18 @@ intervalTimes: {
 
 # How to Use?
 
-## via Docker
+## via Container
 
 Pls look at the `reload.sh` file.
 
 ## via npm
 
 `cd app;npm install;npm start`
+**Note**: You should modify this line if you are going to use without a container. For local development just remove the line. 
+```js 
+executablePath: "/opt/google/chrome-unstable/google-chrome", // app/config.js#L3
+```
+for more details: https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
 
 # URL's
 
