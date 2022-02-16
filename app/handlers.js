@@ -1,33 +1,19 @@
-import { connect, getList } from "./bet365mobile";
+import Bet365 from "./bet365";
 import { getParams } from "./proxy";
 import config from "./config";
 
-export let pageInterval = false;
+export let pageReloadInterval = false;
 export let resultInterval = false;
-export let page = false;
-export let browser = false;
 export let result = false;
 
-export const setPage = p => {
-  page = p;
-};
-export const getPage = () => page;
-
-export const setBrowser = p => {
-  browser = p;
-};
-export const getBrowser = () => browser;
+let instance = new Bet365();
 
 export const closeHandler = async () => {
   //await page.screenshot({ path: "buddy-screenshot.png" });
   try {
-    if (browser === false) {
-      return "browser is not found";
-    }
     await clearInternvalTimer();
-    await browser.close();
-    setBrowser(false);
-    setPage(false);
+    await instance.close();
+
     return "success";
   } catch (exception) {
     console.log(exception);
@@ -36,48 +22,48 @@ export const closeHandler = async () => {
 };
 export const reloadHandler = async () => {
   try {
-    if (browser === false) {
-      return "browser is not found";
-    }
     await clearInternvalTimer();
-    await browser.close();
+    await instance.close();
     return await connectHandler();
-  } catch (exception) {
-    console.log(exception);
-    return exception.toString();
+  } catch (e) {
+    console.log(e);
+    return e.toString();
   }
 };
 export const screenShotHandler = async () => {
   //await page.screenshot({ path: "buddy-screenshot.png" });
   try {
-    if (page === false) {
+    if (instance.page === false) {
       return "page is not found";
     }
-    return await page.screenshot();
-  } catch (exception) {
-    console.log(exception);
-    return exception.toString();
+    return await instance.page.screenshot();
+  } catch (e) {
+    console.log(e);
+    return e.toString();
   }
 };
 export const getContentHandler = async () => {
   try {
-    if (page === false) {
+    if (instance.page === false) {
       return "page is not found";
     }
-    return await page.content();
-  } catch (exception) {
-    console.log(exception);
-    return exception.toString();
+    return await instance.page.content();
+  } catch (e) {
+    console.log(e);
+    return e.toString();
   }
   //return await page.evaluate(() => document.body.innerHTML);
 };
 export const connectHandler = async () => {
   try {
-    let { page, browser } = await connect({
+    if (instance.browser != false) {
+      return "browser is already open. You can use <a href='/reload'>reload</a> handler";
+    }
+    let i = new Bet365();
+    await i.connect({
       params: getParams()
     });
-    setPage(page);
-    setBrowser(browser);
+    instance = i;
     await setIntervalTimer();
     return await screenShotHandler();
   } catch (e) {
@@ -86,10 +72,12 @@ export const connectHandler = async () => {
 
   return;
 };
-export const getListHandler = async () => {
-  return JSON.stringify(await getList());
+export const getListHandler = async res => {
+  res.set("fetch-time", instance.fetchTime);
+  return JSON.stringify(await instance.getList());
 };
-export const resultHandler = async () => {
+export const resultHandler = async res => {
+  res.set("fetch-time", instance.fetchTime);
   return JSON.stringify(result);
 };
 
@@ -98,8 +86,8 @@ export const setIntervalTimer = async () => {
   await clearInternvalTimer();
   // setup page reload interval
   if (config.intervalTimes.reload != 0) {
-    pageInterval = setInterval(async () => {
-      if (page != false) {
+    pageReloadInterval = setInterval(async () => {
+      if (instance.page != false) {
         console.log("Browser Reload");
         await reloadHandler();
       }
@@ -109,17 +97,17 @@ export const setIntervalTimer = async () => {
   // setup result interval
   if (config.intervalTimes.list != 0) {
     resultInterval = setInterval(async () => {
-      if (page != false) {
-        result = await getList();
+      if (instance.page != false) {
+        result = await instance.getList();
       }
     }, 1000 * config.intervalTimes.list);
   }
 };
 
 export const clearInternvalTimer = async () => {
-  if (pageInterval != false) {
+  if (pageReloadInterval != false) {
     // console.log("Time interval has been cleared");
-    clearInterval(pageInterval);
+    clearInterval(pageReloadInterval);
   }
   if (resultInterval != false) {
     // console.log("Time interval has been cleared");

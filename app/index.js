@@ -47,10 +47,10 @@ app.get("/screenshot", async (req, res) => {
   res.end(await screenShotHandler());
 });
 app.get("/result", async (req, res) => {
-  res.end(await getListHandler());
+  res.end(await getListHandler(res));
 });
 app.get("/", async (req, res) => {
-  res.end(await resultHandler());
+  res.end(await resultHandler(res));
 });
 // Show IP
 app.get("/showip", async (req, res) => {
